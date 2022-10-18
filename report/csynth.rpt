@@ -1,0 +1,172 @@
+
+
+================================================================
+== Synthesis Summary Report of 'blockmatmul'
+================================================================
++ General Information: 
+    * Date:           Tue Oct 18 17:33:51 2022
+    * Version:        2022.1 (Build 3526262 on Mon Apr 18 15:48:16 MDT 2022)
+    * Project:        AAHLS_LabB
+    * Solution:       solution1 (Vivado IP Flow Target)
+    * Product family: zynq
+    * Target device:  xc7z020-clg400-1
+    
+
++ Performance & Resource Estimates: 
+    
+    PS: '+' for module; 'o' for loop; '*' for dataflow
+    +-------------------------------------------------------------+------+------+---------+-----------+----------+---------+------+----------+---------+--------+-----------+-------------+-----+
+    |                           Modules                           | Issue|      | Latency |  Latency  | Iteration|         | Trip |          |         |        |           |             |     |
+    |                           & Loops                           | Type | Slack| (cycles)|    (ns)   |  Latency | Interval| Count| Pipelined|  BRAM   |   DSP  |     FF    |     LUT     | URAM|
+    +-------------------------------------------------------------+------+------+---------+-----------+----------+---------+------+----------+---------+--------+-----------+-------------+-----+
+    |+ blockmatmul*                                               |     -|  0.10|      302|  3.020e+03|         -|      221|     -|  dataflow|  1 (~0%)|  3 (1%)|  2979 (2%)|  24577 (46%)|    -|
+    | + Loop_loadA_proc1                                          |     -|  1.50|       81|    810.000|         -|       81|     -|        no|        -|       -|   86 (~0%)|    218 (~0%)|    -|
+    |  o loadA                                                    |     -|  7.30|       80|    800.000|        10|        -|     8|        no|        -|       -|          -|            -|    -|
+    |   + Loop_loadA_proc1_Pipeline_VITIS_LOOP_10_1               |     -|  1.72|        6|     60.000|         -|        6|     -|        no|        -|       -|    8 (~0%)|     58 (~0%)|    -|
+    |    o VITIS_LOOP_10_1                                        |     -|  7.30|        4|     40.000|         2|        1|     4|       yes|        -|       -|          -|            -|    -|
+    | + Loop_2_proc2                                              |     -|  0.10|      220|  2.200e+03|         -|      220|     -|        no|        -|  3 (1%)|  699 (~0%)|     922 (1%)|    -|
+    |  + Loop_2_proc2_Pipeline_1                                  |     -|  3.61|       18|    180.000|         -|       18|     -|        no|        -|       -|    7 (~0%)|     50 (~0%)|    -|
+    |   o Loop 1                                                  |     -|  7.30|       16|    160.000|         1|        1|    16|       yes|        -|       -|          -|            -|    -|
+    |  o partialsum                                               |     -|  7.30|      200|  2.000e+03|        50|        -|     4|        no|        -|       -|          -|            -|    -|
+    |   + Loop_2_proc2_Pipeline_VITIS_LOOP_21_2_VITIS_LOOP_22_3   |     -|  0.10|       21|    210.000|         -|       21|     -|        no|        -|       -|  188 (~0%)|    220 (~0%)|    -|
+    |    o VITIS_LOOP_21_2_VITIS_LOOP_22_3                        |     -|  7.30|       19|    190.000|         5|        1|    16|       yes|        -|       -|          -|            -|    -|
+    |   + Loop_2_proc2_Pipeline_VITIS_LOOP_21_2_VITIS_LOOP_22_33  |     -|  0.10|       21|    210.000|         -|       21|     -|        no|        -|       -|  188 (~0%)|    223 (~0%)|    -|
+    |    o VITIS_LOOP_21_2_VITIS_LOOP_22_3                        |     -|  7.30|       19|    190.000|         5|        1|    16|       yes|        -|       -|          -|            -|    -|
+    | + Loop_writeoutput_proc                                     |     -|  0.53|       18|    180.000|         -|       18|     -|        no|        -|       -|  2000 (1%)|  23389 (43%)|    -|
+    |  o writeoutput                                              |     -|  7.30|       16|    160.000|         4|        4|     4|       yes|        -|       -|          -|            -|    -|
+    +-------------------------------------------------------------+------+------+---------+-----------+----------+---------+------+----------+---------+--------+-----------+-------------+-----+
+
+
+================================================================
+== HW Interfaces
+================================================================
+* AP_FIFO
++-----------+------------+
+| Interface | Data Width |
++-----------+------------+
+| Arows     | 128        |
+| Bcols     | 128        |
++-----------+------------+
+
+* REGISTER
++-------------+---------+----------+
+| Interface   | Mode    | Bitwidth |
++-------------+---------+----------+
+| ABpartial_i | ap_none | 512      |
+| ABpartial_o | ap_none | 512      |
+| it          | ap_none | 32       |
++-------------+---------+----------+
+
+* TOP LEVEL CONTROL
++-----------+------------+-----------------------------------+
+| Interface | Type       | Ports                             |
++-----------+------------+-----------------------------------+
+| ap_clk    | clock      | ap_clk                            |
+| ap_rst    | reset      | ap_rst                            |
+| ap_ctrl   | ap_ctrl_hs | ap_done ap_idle ap_ready ap_start |
++-----------+------------+-----------------------------------+
+
+
+================================================================
+== SW I/O Information
+================================================================
+* Top Function Arguments
++-----------+-----------+----------------------+
+| Argument  | Direction | Datatype             |
++-----------+-----------+----------------------+
+| Arows     | in        | stream<blockvec, 0>& |
+| Bcols     | in        | stream<blockvec, 0>& |
+| ABpartial | inout     | &                    |
+| it        | in        | int                  |
++-----------+-----------+----------------------+
+
+* SW-to-HW Mapping
++-----------+--------------------+-----------+
+| Argument  | HW Interface       | HW Type   |
++-----------+--------------------+-----------+
+| Arows     | Arows              | interface |
+| Bcols     | Bcols              | interface |
+| ABpartial | ABpartial_i        | port      |
+| ABpartial | ABpartial_o        | port      |
+| ABpartial | ABpartial_o_ap_vld | port      |
+| it        | it                 | port      |
++-----------+--------------------+-----------+
+
+
+================================================================
+== M_AXI Burst Information
+================================================================
+ Note: All burst requests might be further partitioned into multiple requests during RTL generation based on max_read_burst_length or max_write_burst_length settings.
+
+  No burst in design
+
+================================================================
+== Bind Op Report
+================================================================
++------------------------------------------------------------+-----+--------+------------+-----+--------+---------+
+| Name                                                       | DSP | Pragma | Variable   | Op  | Impl   | Latency |
++------------------------------------------------------------+-----+--------+------------+-----+--------+---------+
+| + blockmatmul                                              | 3   |        |            |     |        |         |
+|  + Loop_loadA_proc1                                        | 0   |        |            |     |        |         |
+|    add_ln8_fu_132_p2                                       | -   |        | add_ln8    | add | fabric | 0       |
+|   + Loop_loadA_proc1_Pipeline_VITIS_LOOP_10_1              | 0   |        |            |     |        |         |
+|     add_ln10_fu_89_p2                                      | -   |        | add_ln10   | add | fabric | 0       |
+|  + Loop_2_proc2                                            | 3   |        |            |     |        |         |
+|    add_ln18_fu_209_p2                                      | -   |        | add_ln18   | add | fabric | 0       |
+|   + Loop_2_proc2_Pipeline_1                                | 0   |        |            |     |        |         |
+|     empty_36_fu_56_p2                                      | -   |        | empty_36   | add | fabric | 0       |
+|   + Loop_2_proc2_Pipeline_VITIS_LOOP_21_2_VITIS_LOOP_22_3  | 0   |        |            |     |        |         |
+|     add_ln21_3_fu_140_p2                                   | -   |        | add_ln21_3 | add | fabric | 0       |
+|     add_ln21_fu_149_p2                                     | -   |        | add_ln21   | add | fabric | 0       |
+|     add_ln24_2_fu_223_p2                                   | -   |        | add_ln24_2 | add | fabric | 0       |
+|     AB_d0                                                  | -   |        | add_ln24   | add | fabric | 0       |
+|     add_ln22_fu_229_p2                                     | -   |        | add_ln22   | add | fabric | 0       |
+|   + Loop_2_proc2_Pipeline_VITIS_LOOP_21_2_VITIS_LOOP_22_33 | 0   |        |            |     |        |         |
+|     add_ln21_fu_140_p2                                     | -   |        | add_ln21   | add | fabric | 0       |
+|     add_ln21_1_fu_149_p2                                   | -   |        | add_ln21_1 | add | fabric | 0       |
+|     add_ln24_fu_231_p2                                     | -   |        | add_ln24   | add | fabric | 0       |
+|     AB_d0                                                  | -   |        | add_ln24_1 | add | fabric | 0       |
+|     add_ln22_fu_237_p2                                     | -   |        | add_ln22   | add | fabric | 0       |
+|  + Loop_writeoutput_proc                                   | 0   |        |            |     |        |         |
+|    add_ln28_fu_152_p2                                      | -   |        | add_ln28   | add | fabric | 0       |
++------------------------------------------------------------+-----+--------+------------+-----+--------+---------+
+
+
+================================================================
+== Bind Storage Report
+================================================================
++-----------------+------+------+--------+----------+---------+------+---------+
+| Name            | BRAM | URAM | Pragma | Variable | Storage | Impl | Latency |
++-----------------+------+------+--------+----------+---------+------+---------+
+| + blockmatmul   | 1    | 0    |        |          |         |      |         |
+|   tmp_a_U       | -    | -    |        | tmp_a    | ram_t2p | auto | 1       |
+|   AB_U          | 2    | -    |        | AB       | ram_s2p | auto | 1       |
+|  + Loop_2_proc2 | 0    | 0    |        |          |         |      |         |
+|    tmp_a_U      | -    | -    |        | tmp_a    | ram_t2p | auto | 1       |
++-----------------+------+------+--------+----------+---------+------+---------+
+
+
+================================================================
+== Pragma Report
+================================================================
+* Pragmas with Warnings
++----------+---------+---------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| Type     | Options | Location                                    | Messages                                                                                                                                                                           |
++----------+---------+---------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+| dataflow |         | AAHLS_LabB/BlockMatrix.cpp:4 in blockmatmul | Since the only kind of statements allowed in a canonical dataflow region are variable declarations and function calls, the compiler may not be able to correctly handle the region |
++----------+---------+---------------------------------------------+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+
+* Valid Pragma Syntax
++---------------+---------------------------+-------------------------------------------------+
+| Type          | Options                   | Location                                        |
++---------------+---------------------------+-------------------------------------------------+
+| pipeline      | II=1                      | AAHLS_LabB/BlockMatrix.cpp:11 in blockmatmul    |
+| unroll        | factor=2                  | AAHLS_LabB/BlockMatrix.cpp:20 in blockmatmul    |
+| pipeline      | II=1                      | AAHLS_LabB/BlockMatrix.cpp:23 in blockmatmul    |
+| pipeline      | II=4                      | AAHLS_LabB/BlockMatrix.cpp:29 in blockmatmul    |
+| array_reshape | variable=A complete dim=2 | AAHLS_LabB/CompleteMatrix.cpp:4 in matrixmul, A |
+| array_reshape | variable=B complete dim=1 | AAHLS_LabB/CompleteMatrix.cpp:5 in matrixmul, B |
+| pipeline      | II=1                      | AAHLS_LabB/CompleteMatrix.cpp:9 in matrixmul    |
++---------------+---------------------------+-------------------------------------------------+
+
+
